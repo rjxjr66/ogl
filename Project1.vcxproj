@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CHash.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
@@ -19,6 +21,8 @@
     <None Include="shader.vs" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CHash.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

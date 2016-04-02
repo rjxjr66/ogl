@@ -16,6 +16,12 @@
     <Filter Include="Source Files\Shaders">
       <UniqueIdentifier>{52a52ae0-91d9-40fc-bf9d-4ce7a553f3b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{1861ae40-0e29-4d54-a06b-6de6c2f646c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{21da1f20-1187-45ce-b11e-5e80688cfccc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -23,6 +29,12 @@
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CHash.cpp">
+      <Filter>Source Files\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -35,6 +47,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

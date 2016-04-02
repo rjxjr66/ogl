@@ -6,6 +6,36 @@
 
 Shader::Shader(std::string& vs, std::string& fs)
 {
+	Shader::LoadShader(vs, fs);
+}
+
+Shader::Shader()
+{
+
+}
+
+void Shader::Use()
+{
+	glUseProgram(program);
+}
+
+void Shader::AddUniformVar(const char* var)
+{
+	uniformVars[CHash(var)] = glGetUniformLocation(program, var);;
+}
+
+GLuint Shader::GetUniformVar(const CHash& var)
+{
+	return uniformVars[var];
+}
+
+GLuint Shader::GetUniformVar(const char* var)
+{
+	return Shader::GetUniformVar(CHash(var));
+}
+
+void Shader::LoadShader(std::string& vs, std::string& fs)
+{
 	GLuint ShaderObj;
 	program = glCreateProgram();
 
@@ -48,14 +78,5 @@ Shader::Shader(std::string& vs, std::string& fs)
 	ifsFS.close();
 
 	glLinkProgram(program);
-
-
-	// test
-	mWorld = glGetUniformLocation(program, "gWorld");
-}
-
-void Shader::Use()
-{
-	glUseProgram(program);
 }
 

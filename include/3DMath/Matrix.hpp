@@ -92,47 +92,47 @@ struct Matrix4 {
     Matrix4 operator * (const Matrix4& b) const
     {
         Matrix4 m;
+// 		m.x.x = x.x * b.x.x + y.x * b.x.y + z.x * b.x.z + w.x * b.x.w;
+// 		m.x.y = x.y * b.x.x + y.y * b.x.y + z.y * b.x.z + w.y * b.x.w;
+// 		m.x.z = x.z * b.x.x + y.z * b.x.y + z.z * b.x.z + w.z * b.x.w;
+// 		m.x.w = x.w * b.x.x + y.w * b.x.y + z.w * b.x.z + w.w * b.x.w;
+// 
+// 		m.y.x = x.x * b.y.x + y.x * b.y.y + z.x * b.y.z + w.x * b.y.w;
+// 		m.y.y = x.y * b.y.x + y.y * b.y.y + z.y * b.y.z + w.y * b.y.w;
+// 		m.y.z = x.z * b.y.x + y.z * b.y.y + z.z * b.y.z + w.z * b.y.w;
+// 		m.y.w = x.w * b.y.x + y.w * b.y.y + z.w * b.y.z + w.w * b.y.w;
+// 
+// 		m.z.x = x.x * b.z.x + y.x * b.z.y + z.x * b.z.z + w.x * b.z.w;
+// 		m.z.y = x.y * b.z.x + y.y * b.z.y + z.y * b.z.z + w.y * b.z.w;
+// 		m.z.z = x.z * b.z.x + y.z * b.z.y + z.z * b.z.z + w.z * b.z.w;
+// 		m.z.w = x.w * b.z.x + y.w * b.z.y + z.w * b.z.z + w.w * b.z.w;
+// 
+// 		m.w.x = x.x * b.w.x + y.x * b.w.y + z.x * b.w.z + w.x * b.w.w;
+// 		m.w.y = x.y * b.w.x + y.y * b.w.y + z.y * b.w.z + w.y * b.w.w;
+// 		m.w.z = x.z * b.w.x + y.z * b.w.y + z.z * b.w.z + w.z * b.w.w;
+// 		m.w.w = x.w * b.w.x + y.w * b.w.y + z.w * b.w.z + w.w * b.w.w;
+ 		
+		
 		m.x.x = x.x * b.x.x + y.x * b.x.y + z.x * b.x.z + w.x * b.x.w;
 		m.x.y = x.y * b.x.x + y.y * b.x.y + z.y * b.x.z + w.y * b.x.w;
 		m.x.z = x.z * b.x.x + y.z * b.x.y + z.z * b.x.z + w.z * b.x.w;
 		m.x.w = x.w * b.x.x + y.w * b.x.y + z.w * b.x.z + w.w * b.x.w;
-
+		
 		m.y.x = x.x * b.y.x + y.x * b.y.y + z.x * b.y.z + w.x * b.y.w;
 		m.y.y = x.y * b.y.x + y.y * b.y.y + z.y * b.y.z + w.y * b.y.w;
 		m.y.z = x.z * b.y.x + y.z * b.y.y + z.z * b.y.z + w.z * b.y.w;
 		m.y.w = x.w * b.y.x + y.w * b.y.y + z.w * b.y.z + w.w * b.y.w;
-
+		
 		m.z.x = x.x * b.z.x + y.x * b.z.y + z.x * b.z.z + w.x * b.z.w;
 		m.z.y = x.y * b.z.x + y.y * b.z.y + z.y * b.z.z + w.y * b.z.w;
 		m.z.z = x.z * b.z.x + y.z * b.z.y + z.z * b.z.z + w.z * b.z.w;
 		m.z.w = x.w * b.z.x + y.w * b.z.y + z.w * b.z.z + w.w * b.z.w;
-
+		
 		m.w.x = x.x * b.w.x + y.x * b.w.y + z.x * b.w.z + w.x * b.w.w;
 		m.w.y = x.y * b.w.x + y.y * b.w.y + z.y * b.w.z + w.y * b.w.w;
 		m.w.z = x.z * b.w.x + y.z * b.w.y + z.z * b.w.z + w.z * b.w.w;
 		m.w.w = x.w * b.w.x + y.w * b.w.y + z.w * b.w.z + w.w * b.w.w;
 		
-		/*
-		m.x.x = x.x * b.x.x + y.x * b.x.y + z.x * b.x.z + w.x * b.x.w;
-		m.x.y = x.y * b.x.x + y.y * b.x.y + z.y * b.x.z + w.y * b.x.w;
-		m.x.z = x.z * b.x.x + y.z * b.x.y + z.z * b.x.z + w.z * b.x.w;
-		m.x.w = x.w * b.x.x + y.w * b.x.y + z.w * b.x.z + w.w * b.x.w;
-		
-		m.y.x = x.x * b.y.x + y.x * b.y.y + z.x * b.y.z + w.x * b.y.w;
-		m.y.y = x.y * b.y.x + y.y * b.y.y + z.y * b.y.z + w.y * b.y.w;
-		m.y.z = x.z * b.y.x + y.z * b.y.y + z.z * b.y.z + w.z * b.y.w;
-		m.y.w = x.w * b.y.x + y.w * b.y.y + z.w * b.y.z + w.w * b.y.w;
-		
-		m.z.x = x.x * b.z.x + y.x * b.z.y + z.x * b.z.z + w.x * b.z.w;
-		m.z.y = x.y * b.z.x + y.y * b.z.y + z.y * b.z.z + w.y * b.z.w;
-		m.z.z = x.z * b.z.x + y.z * b.z.y + z.z * b.z.z + w.z * b.z.w;
-		m.z.w = x.w * b.z.x + y.w * b.z.y + z.w * b.z.z + w.w * b.z.w;
-		
-		m.w.x = x.x * b.w.x + y.x * b.w.y + z.x * b.w.z + w.x * b.w.w;
-		m.w.y = x.y * b.w.x + y.y * b.w.y + z.y * b.w.z + w.y * b.w.w;
-		m.w.z = x.z * b.w.x + y.z * b.w.y + z.z * b.w.z + w.z * b.w.w;
-		m.w.w = x.w * b.w.x + y.w * b.w.y + z.w * b.w.z + w.w * b.w.w;
-		*/
 
 		return m;
     }
