@@ -56,12 +56,12 @@ void InitGeometry() {
 	vertices[6] = vec3(-0.5f, 0.5f, -0.5f);
 	vertices[7] = vec3(0.5f, 0.5f, -0.5f);
 
-	unsigned int indices[] = { 0, 1, 2,
+	unsigned int indices[] = { 2, 1, 0,
 								1, 2, 3,
 								4, 5, 6,
-								5, 6, 7,
-								0, 2, 4,
-								2, 6, 4,
+								7, 6, 5,
+								4, 2, 0,
+								4, 6, 2,
 								1, 3, 5,
 								3, 7, 5,
 								2, 6, 7,
@@ -82,7 +82,7 @@ void InitGeometry() {
 }
 
 void InitShader() {
-	shader.LoadShader(std::string("shader.vs"), std::string("shader.fs"));
+	shader.LoadShader(std::string("shaders/shader.vs"), std::string("shaders/shader.fs"));
 	shader.AddUniformVar("gWorld");
 	shader.AddUniformVar("gView");
 	shader.AddUniformVar("gProj");
@@ -102,6 +102,9 @@ void Resize(int width, int height) {
 
 void Init() {
 	glEnable(GL_DEPTH_TEST);
+	glFrontFace(GL_CW);
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
 
 	camera.SetView(vec3(0, 2, 4), vec3(0, 0, 0), vec3(0, 1, 0));
 }

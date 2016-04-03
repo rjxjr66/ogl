@@ -2,7 +2,6 @@
 #include "Camera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/constants.hpp>
 
 void Camera::SetView(const vec3& eye, const vec3& lookat, const vec3& up)
 {
