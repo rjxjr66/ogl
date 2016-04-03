@@ -1,10 +1,15 @@
 #pragma once
-#include <3DMath/Matrix.hpp>
+#include <glm/glm.hpp>
+
+using namespace glm;
 
 class Camera {
 private:
-	vec3 m_eye, m_lookat, m_up;
-	mat4 m_view, m_proj;
+	vec3 m_eye;
+	vec3 m_lookat;
+	vec3 m_up;
+	mat4 m_view;
+	mat4 m_proj;
 
 public:
 	// »ý¼ºÀÚ

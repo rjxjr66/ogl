@@ -2,8 +2,6 @@
 
 #include <fstream>
 
-#include "3DMath/Matrix.hpp"
-
 Shader::Shader(std::string& vs, std::string& fs)
 {
 	Shader::LoadShader(vs, fs);

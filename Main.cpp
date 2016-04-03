@@ -3,7 +3,9 @@
 
 #include <iostream>
 
-#include "3DMath/Matrix.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "Shader.h"
 #include "Camera.h"
 
@@ -13,25 +15,24 @@ GLuint IBO;
 Shader shader;
 Camera camera;
 
+using namespace glm;
+
 void Render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	static float test = 0;
-	test += 1;
+	test += 0.01;
 
 	shader.Use();
 
 	camera.RotateY(0);
 	
-	//mat4 world = mat4::RotateY(test) * mat4::RotateX(test) * camera.GetView() * camera.GetProj();
-	mat4 world = mat4::Translate(0, 1, 0) * mat4::RotateY(test) * mat4::RotateX(test);
+	mat4 world = glm::rotate(mat4(1.0f), test, vec3(0, 1, 0)) * glm::rotate(mat4(1.0f), test, vec3(0, 0, 1));
 
-	glUniformMatrix4fv(shader.GetUniformVar("gWorld"), 1, GL_TRUE, world.Pointer());
-	glUniformMatrix4fv(shader.GetUniformVar("gView"), 1, GL_TRUE, camera.GetView().Pointer());
-	glUniformMatrix4fv(shader.GetUniformVar("gProj"), 1, GL_TRUE, camera.GetProj().Pointer());
-
-	//glUniformMatrix4fv(shader.GetUniformVar("gView"), 1, GL_TRUE, mat4::Identity().Pointer());
-	//glUniformMatrix4fv(shader.GetUniformVar("gProj"), 1, GL_TRUE, mat4::Identity().Pointer());
+	glUniformMatrix4fv(shader.GetUniformVar("gWorld"), 1, GL_TRUE, &world[0][0]);
+	glUniformMatrix4fv(shader.GetUniformVar("gView"), 1, GL_TRUE, &(camera.GetView())[0][0]);
+	glUniformMatrix4fv(shader.GetUniformVar("gProj"), 1, GL_TRUE, &(camera.GetProj())[0][0]);
+	glUniformMatrix4fv(shader.GetUniformVar("gWVP"), 1, GL_TRUE, &(camera.GetProj() * camera.GetView() * world)[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
@@ -85,6 +86,7 @@ void InitShader() {
 	shader.AddUniformVar("gWorld");
 	shader.AddUniformVar("gView");
 	shader.AddUniformVar("gProj");
+	shader.AddUniformVar("gWVP");
 }
 
 void Resize(int width, int height) {
@@ -95,7 +97,7 @@ void Resize(int width, int height) {
 		ratio = (GLfloat)height / (GLfloat)width;
 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-	camera.SetProj(mat4::Perspective(60, ratio, 1, 1000));
+	camera.SetProj(glm::perspective(glm::radians(60.f), ratio, 1.f, 1000.f));
 }
 
 void Init() {

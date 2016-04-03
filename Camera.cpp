@@ -1,5 +1,8 @@
+#define GLM_SWIZZLE
 #include "Camera.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/constants.hpp>
 
 void Camera::SetView(const vec3& eye, const vec3& lookat, const vec3& up)
 {
@@ -7,7 +10,7 @@ void Camera::SetView(const vec3& eye, const vec3& lookat, const vec3& up)
 	m_lookat = lookat;
 	m_up = up;
 
-	m_view = mat4::LookAt(eye, lookat, up);
+	m_view = glm::lookAt(eye, lookat, up);
 }
 
 mat4 Camera::GetView()
@@ -67,21 +70,21 @@ mat4 Camera::GetProj()
 
 void Camera::RotateX(float f)
 {
-	vec3 newEye = (mat4::RotateX(f) * vec4(m_eye, 1)).ToVec3();
+	vec3 newEye = (glm::rotate(mat4(1.0f), f, vec3(1,0,0)) * vec4(m_eye, 1)).xyz;
 
 	SetView(newEye, m_lookat, m_up);
 }
 
 void Camera::RotateY(float f)
 {
-	vec3 newEye = (mat4::RotateY(f) * vec4(m_eye, 1)).ToVec3();
+	vec3 newEye = (glm::rotate(mat4(1.0f), f, vec3(0, 1, 0)) * vec4(m_eye, 1)).xyz;
 
 	SetView(newEye, m_lookat, m_up);
 }
 
 void Camera::RotateZ(float f)
 {
-	vec3 newEye = (mat4::RotateZ(f) * vec4(m_eye, 1)).ToVec3();
+	vec3 newEye = (glm::rotate(mat4(1.0f), f, vec3(0, 0, 1)) * vec4(m_eye, 1)).xyz;
 
 	SetView(newEye, m_lookat, m_up);
 }
@@ -91,11 +94,11 @@ void Camera::Zoom(float f)
 	vec3 reverseLoS = m_eye - m_lookat;
 
 	if (f > 0) {				// If positive, zoom out.
-		reverseLoS = reverseLoS * 1.1;
+		reverseLoS = reverseLoS * 1.1f;
 	}
 	else if (f < 0) {		// Otherwise, zoom in
-		if (reverseLoS.Length() > 0.05) { // Prevent the from point from hitting the at point.
-			reverseLoS = reverseLoS * 0.9;
+		if (reverseLoS.length() > 0.05) { // Prevent the from point from hitting the at point.
+			reverseLoS = reverseLoS * 0.9f;
 		}
 	}
 
@@ -104,7 +107,7 @@ void Camera::Zoom(float f)
 
 void Camera::RotateView(float angle, vec3 axis)
 {
-	angle = angle * PI / 180;
+	angle = glm::radians(angle);
 	vec3 vNewView;
 
 	// Get the view vector (The direction we are facing)
@@ -132,7 +135,7 @@ void Camera::RotateView(float angle, vec3 axis)
 	// Now we just add the newly rotated vector to our position to set
 	// our new rotated view of our camera.
 	vec3 newEye = m_lookat + vNewView;
-	SetView(newEye, m_lookat, m_lookat.Cross(newEye));
+	SetView(newEye, m_lookat, glm::cross(m_lookat, newEye));
 }
 
 void Camera::Pan(float downDegrees, float rightDegrees)
@@ -141,15 +144,15 @@ void Camera::Pan(float downDegrees, float rightDegrees)
 	vec3 reverseLoS = m_eye - m_lookat;
 
 	// Find the orthogonal local scheme to use.
-	vec3 right = m_up.Cross(reverseLoS);
-	vec3 orthogUp = reverseLoS.Cross(right);
+	vec3 right = glm::cross(m_up, reverseLoS);
+	vec3 orthogUp = glm::cross(reverseLoS, right);
 
 	// Rotate both vectors in question around those axes
 	// we just found.
-	reverseLoS = reverseLoS.RotateAxis(right, downDegrees);
-	reverseLoS = reverseLoS.RotateAxis(orthogUp, rightDegrees);
-	m_up = m_up.RotateAxis(right, downDegrees);
-	m_up = m_up.RotateAxis(orthogUp, rightDegrees);
+	reverseLoS = (vec4(reverseLoS, 0) * glm::rotate(mat4(1.f), downDegrees, right)).xyz;
+	reverseLoS = (vec4(reverseLoS, 0) * glm::rotate(mat4(1.f), rightDegrees, orthogUp)).xyz;
+	m_up = (vec4(m_up, 0) * glm::rotate(mat4(1.f), downDegrees, right)).xyz;
+	m_up = (vec4(m_up, 0) * glm::rotate(mat4(1.f), rightDegrees, orthogUp)).xyz;
 
 	// Store the vectors back into our variables. We
 	// translate the reversed line of sight to return
