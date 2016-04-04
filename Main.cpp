@@ -1,10 +1,10 @@
+#define GLM_SWIZZLE
 #include <GL/glew.h>
 #include <GL/glut.h>
 
 #include <iostream>
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Shader.h"
@@ -26,9 +26,11 @@ void Render() {
 
 	shader.Use();
 
-	camera.RotateY(0);
-	
-	mat4 world = glm::rotate(mat4(1.0f), test, vec3(0, 1, 0)) * glm::rotate(mat4(1.0f), test, vec3(0, 0, 1));
+	//camera.RotateY(test);
+	vec4 pos = vec4(0, 0, 0, 1);
+	mat4 world = glm::translate(mat4(), vec3(-2, 0, 0));
+	vec3 newPos = (world * pos).yzw;
+	//mat4 world = glm::rotate(mat4(1.0f), test, vec3(0, 1, 0)) * glm::rotate(mat4(1.0f), test, vec3(0, 0, 1));
 
 	glUniformMatrix4fv(shader.GetUniformVar("gWorld"), 1, GL_TRUE, &world[0][0]);
 	glUniformMatrix4fv(shader.GetUniformVar("gView"), 1, GL_TRUE, &(camera.GetView())[0][0]);

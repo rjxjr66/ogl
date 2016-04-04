@@ -13,7 +13,7 @@ private:
 	GLuint m_IBO;
 	GLuint m_texture;
 	mat4 m_mWorld;
-
+	
 public:
 	Mesh();
 };
