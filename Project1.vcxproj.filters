@@ -41,10 +41,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.fs">
+    <None Include="shader.vs">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="shader.vs">
+    <None Include="shaders\shader.fs">
       <Filter>Source Files\Shaders</Filter>
     </None>
   </ItemGroup>

@@ -18,8 +18,8 @@
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.fs" />
     <None Include="shader.vs" />
+    <None Include="shaders\shader.fs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
