@@ -5,12 +5,10 @@
 #include <GL/glut.h>
 #include <map>
 
-#include "CHash.h"
-
 class Shader {
 private:
 	GLuint program;
-	std::map<CHash, GLuint> uniformVars;
+	std::map<std::string, GLint> uniformVars;
 
 public:
 	Shader();
@@ -19,8 +17,7 @@ public:
 	void LoadShader(std::string& vs, std::string& fs);
 	void Use();
 	void AddUniformVar(const char* var);
-	GLuint GetUniformVar(const char* var);
-	GLuint GetUniformVar(const CHash& var);
+	GLint GetUniformVar(const char* var);
 };
 
 #endif

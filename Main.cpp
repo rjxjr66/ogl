@@ -1,4 +1,3 @@
-#define GLM_SWIZZLE
 #include <GL/glew.h>
 #include <GL/glut.h>
 
@@ -8,7 +7,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Shader.h"
+#include "Material.h"
 #include "Camera.h"
+#include "Mesh.h"
 
 GLuint VBO;
 GLuint IBO;
@@ -16,26 +17,26 @@ GLuint IBO;
 Shader shader;
 Camera camera;
 
+Mesh* sphere;
+Material* phong;
+
 using namespace glm;
 
 void Render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	static float test = 0;
-	test += 0.01;
-
-	shader.Use();
+	test += 0.001;
 
 	//camera.RotateY(test);
-	vec4 pos = vec4(0, 0, 0, 1);
-	mat4 world = glm::translate(mat4(), vec3(-2, 0, 0));
-	vec3 newPos = (world * pos).yzw;
-	//mat4 world = glm::rotate(mat4(1.0f), test, vec3(0, 1, 0)) * glm::rotate(mat4(1.0f), test, vec3(0, 0, 1));
 
-	glUniformMatrix4fv(shader.GetUniformVar("gWorld"), 1, GL_TRUE, &world[0][0]);
-	glUniformMatrix4fv(shader.GetUniformVar("gView"), 1, GL_TRUE, &(camera.GetView())[0][0]);
-	glUniformMatrix4fv(shader.GetUniformVar("gProj"), 1, GL_TRUE, &(camera.GetProj())[0][0]);
-	glUniformMatrix4fv(shader.GetUniformVar("gWVP"), 1, GL_TRUE, &(camera.GetProj() * camera.GetView() * world)[0][0]);
+	// Box
+	mat4 world = glm::translate(mat4(), vec3(-2, 0, 0));
+	
+	shader.Use();
+	glUniformMatrix4fv(shader.GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * world)[0][0]);
+
+	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
@@ -44,6 +45,18 @@ void Render() {
 	
 	glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_INT, 0);
 
+	glDisableVertexAttribArray(0);
+
+	// Sphere
+	static vec3 lightDirection = vec3(-1, -1, 0);
+	lightDirection = vec3(glm::rotate(mat4(1.0f), 0.01f, vec3(0, 1, 0)) * glm::rotate(mat4(1.0f), 0.01f, vec3(0, 0, 1)) * vec4(lightDirection, 0));
+
+	sphere->GetMaterial()->Use();
+	glUniformMatrix4fv(phong->GetShader()->GetUniformVar("gWorld"), 1, GL_FALSE, &sphere->GetMatrix()[0][0]);
+	glUniformMatrix4fv(phong->GetShader()->GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * sphere->GetMatrix())[0][0]);
+	glUniform3fv(phong->GetShader()->GetUniformVar("gLightDirection"), 1, &lightDirection[0]);
+	
+	sphere->Render(0);
 
 	glutSwapBuffers();
 }
@@ -77,19 +90,28 @@ void InitGeometry() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0);
-
 	glGenBuffers(1, &IBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	sphere = Mesh::GenerateSphere(1, 16, 32);
+	sphere->SetMaterial(phong);
 }
 
 void InitShader() {
 	shader.LoadShader(std::string("shaders/shader.vs"), std::string("shaders/shader.fs"));
-	shader.AddUniformVar("gWorld");
-	shader.AddUniformVar("gView");
-	shader.AddUniformVar("gProj");
 	shader.AddUniformVar("gWVP");
+
+	// Phong shading
+	phong = new Material();
+
+	Shader* phongShader = new Shader(std::string("shaders/phong.vs"), std::string("shaders/phong.fs"));
+	
+	phongShader->AddUniformVar("gWVP");
+	phongShader->AddUniformVar("gWorld");
+	phongShader->AddUniformVar("gLightDirection");
+
+	phong->SetShader(phongShader);
 }
 
 void Resize(int width, int height) {
@@ -129,8 +151,8 @@ int main(int argc, char** argv) {
 	}
 
 	Init();
-	InitGeometry();
 	InitShader();
+	InitGeometry();
 
 	glutDisplayFunc(Render);
 	glutIdleFunc(Render);

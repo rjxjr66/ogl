@@ -19,17 +19,15 @@ void Shader::Use()
 
 void Shader::AddUniformVar(const char* var)
 {
-	uniformVars[CHash(var)] = glGetUniformLocation(program, var);;
+	GLint loc = glGetUniformLocation(program, var);
+	if (loc == -1)
+		return;
+	uniformVars[var] = loc;
 }
 
-GLuint Shader::GetUniformVar(const CHash& var)
+GLint Shader::GetUniformVar(const char* var)
 {
 	return uniformVars[var];
-}
-
-GLuint Shader::GetUniformVar(const char* var)
-{
-	return Shader::GetUniformVar(CHash(var));
 }
 
 void Shader::LoadShader(std::string& vs, std::string& fs)

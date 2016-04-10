@@ -39,12 +39,21 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.vs">
+    <None Include="shaders\shader.fs">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="shaders\shader.fs">
+    <None Include="shaders\phong.fs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\phong.vs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\shader.vs">
       <Filter>Source Files\Shaders</Filter>
     </None>
   </ItemGroup>
@@ -59,6 +68,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
