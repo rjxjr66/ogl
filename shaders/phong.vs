@@ -7,13 +7,11 @@ layout (location = 2) in vec2 TexCoord;
 uniform mat4 gWVP;
 uniform mat4 gWorld;
 
-out vec3 WorldPos0;
 out vec2 TexCoord0;
 out vec3 Normal0;
 
 void main()
 {
-	WorldPos0 = (gWorld * vec4(Position, 0.0)).xyz;
 	TexCoord0 = TexCoord;
     Normal0 = (gWorld * vec4(Normal, 0.0)).xyz;
 

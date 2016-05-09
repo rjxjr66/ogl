@@ -160,3 +160,20 @@ void Camera::Pan(float downDegrees, float rightDegrees)
 	SetView(reverseLoS + m_lookat, m_lookat, m_up);
 }
 
+void Camera::GoForward(float d)
+{
+	vec3 direction = glm::normalize(m_lookat - m_eye);
+	direction *= d;
+
+	SetView(m_eye + direction, m_lookat + direction, m_up);
+}
+
+void Camera::TurnAround(float d)
+{
+	vec3 newLookAt = m_lookat - m_eye;
+	newLookAt = (vec4(newLookAt, 1) * glm::rotate(mat4(1.0f), d, vec3(0, 1, 0))).xyz;
+	newLookAt += m_eye;
+
+	SetView(m_eye, newLookAt, m_up);
+}
+

@@ -68,7 +68,7 @@ Mesh* Mesh::GenerateSphere(float radius, unsigned int rings, unsigned int sector
 
 	return mesh;
 }
-
+ 
 void Mesh::Render(float dt) {
 	if (material)
 		material->Use();

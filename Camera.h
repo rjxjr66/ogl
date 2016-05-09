@@ -29,6 +29,9 @@ public:
 	vec3 GetLookAt();
 	vec3 GetUp();
 
+	void GoForward(float d);
+	void TurnAround(float d);
+
 	void RotateX(float);
 	void RotateY(float);
 	void RotateZ(float);

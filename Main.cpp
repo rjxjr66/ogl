@@ -10,6 +10,7 @@
 #include "Material.h"
 #include "Camera.h"
 #include "Mesh.h"
+#include "Texture.h"
 
 GLuint VBO;
 GLuint IBO;
@@ -104,6 +105,7 @@ void InitShader() {
 
 	// Phong shading
 	phong = new Material();
+	phong->SetTexture(new Texture("textures/earthmap.jpg"));
 
 	Shader* phongShader = new Shader(std::string("shaders/phong.vs"), std::string("shaders/phong.fs"));
 	
@@ -131,7 +133,33 @@ void Init() {
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
 
-	camera.SetView(vec3(0, 2, 4), vec3(0, 0, 0), vec3(0, 1, 0));
+	camera.SetView(vec3(0, 2, 50), vec3(0, 0, 0), vec3(0, 1, 0));
+}
+
+void Keyboard(unsigned char key, int x, int y)
+{
+	switch (key) {
+	case 'w':
+		camera.GoForward(1.0f);
+		break;
+	case 's':
+		camera.GoForward(-1.0f);
+		break;
+	case 'a':
+
+		break;
+	case 'd':
+
+		break;
+	case 'q':
+		camera.TurnAround(-0.01f);
+		break;
+	case 'e':
+		camera.TurnAround(0.01f);
+		break;
+	default:
+		return;
+	}
 }
 
 int main(int argc, char** argv) {
@@ -154,6 +182,7 @@ int main(int argc, char** argv) {
 	InitShader();
 	InitGeometry();
 
+	glutKeyboardFunc(Keyboard);
 	glutDisplayFunc(Render);
 	glutIdleFunc(Render);
 	glutReshapeFunc(Resize);
