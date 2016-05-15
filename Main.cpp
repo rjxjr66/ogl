@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Terrain.h"
 
 GLuint VBO;
 GLuint IBO;
@@ -20,6 +21,8 @@ Camera camera;
 
 Mesh* sphere;
 Material* phong;
+Material* terrainMaterial;
+Terrain* terrain;
 
 using namespace glm;
 
@@ -58,6 +61,13 @@ void Render() {
 	glUniform3fv(phong->GetShader()->GetUniformVar("gLightDirection"), 1, &lightDirection[0]);
 	
 	sphere->Render(0);
+	
+	terrain->GetMaterial()->Use();
+	glUniformMatrix4fv(terrainMaterial->GetShader()->GetUniformVar("gWorld"), 1, GL_FALSE, &terrain->GetMatrix()[0][0]);
+	glUniformMatrix4fv(terrainMaterial->GetShader()->GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * terrain->GetMatrix())[0][0]);
+	glUniform3fv(terrainMaterial->GetShader()->GetUniformVar("gLightDirection"), 1, &lightDirection[0]);
+
+	terrain->Render(0);
 
 	glutSwapBuffers();
 }
@@ -97,6 +107,9 @@ void InitGeometry() {
 
 	sphere = Mesh::GenerateSphere(1, 16, 32);
 	sphere->SetMaterial(phong);
+
+	terrain = new Terrain("textures/pohang.png", (float)1 / (float)32);
+	terrain->SetMaterial(terrainMaterial);
 }
 
 void InitShader() {
@@ -114,6 +127,17 @@ void InitShader() {
 	phongShader->AddUniformVar("gLightDirection");
 
 	phong->SetShader(phongShader);
+
+	terrainMaterial = new Material();
+	terrainMaterial->SetTexture(new Texture("textures/height.png"));
+
+	Shader* terrainShader = new Shader(std::string("shaders/terrain.vs"), std::string("shaders/terrain.fs"));
+
+	terrainShader->AddUniformVar("gWVP");
+	terrainShader->AddUniformVar("gWorld");
+	terrainShader->AddUniformVar("gLightDirection");
+
+	terrainMaterial->SetShader(terrainShader);
 }
 
 void Resize(int width, int height) {
@@ -129,11 +153,8 @@ void Resize(int width, int height) {
 
 void Init() {
 	glEnable(GL_DEPTH_TEST);
-	glFrontFace(GL_CW);
-	glCullFace(GL_BACK);
-	glEnable(GL_CULL_FACE);
 
-	camera.SetView(vec3(0, 2, 50), vec3(0, 0, 0), vec3(0, 1, 0));
+	camera.SetView(vec3(0, 25, 50), vec3(0, 0, 0), vec3(0, 1, 0));
 }
 
 void Keyboard(unsigned char key, int x, int y)

@@ -11,6 +11,21 @@ Mesh::Mesh() : fvf(FVF::Position), nVertices(0), nIndeces(0)
 
 }
 
+void Mesh::SetVertexArray(void* vertices, unsigned int size, int FVF, const std::vector<unsigned int>& indices) {
+	fvf = FVF;
+	nIndeces = indices.size();
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+
+	glGenBuffers(1, &IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+}
+
 Mesh* Mesh::GenerateSphere(float radius, unsigned int rings, unsigned int sectors) {
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;

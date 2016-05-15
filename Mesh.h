@@ -3,6 +3,7 @@
 #include <GL/glut.h>
 
 #include <glm/glm.hpp>
+#include <vector>
 
 using namespace glm;
 
@@ -30,6 +31,7 @@ private:
 	int nIndeces;
 public:
 	Mesh();
+	void SetVertexArray(void* vertices, unsigned int size, int FVF, const std::vector<unsigned int>& indices);
 	void SetMaterial(Material* m) { material = m; };
 	void SetMatrix(const mat4& m) { world = m; };
 	const mat4& GetMatrix() { return world; };
