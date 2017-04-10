@@ -177,3 +177,13 @@ void Camera::TurnAround(float d)
 	SetView(m_eye, newLookAt, m_up);
 }
 
+void Camera::Attach(Mesh& mesh)
+{
+	vec3 position = *mesh.GetPosition();
+	vec3 newEye = GetEye();
+	newEye.x = position.x;
+	newEye.z = position.z;
+	SetEye(newEye);
+	SetLookAt(position);
+}
+

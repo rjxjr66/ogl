@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "Mesh.h"
 
 using namespace glm;
 
@@ -39,4 +40,6 @@ public:
 	void Zoom(float);
 	void Pan(float downDegrees, float rightDegrees);
 	void RotateView(float angle, vec3 axis);
+
+	void Attach(Mesh& mesh);
 };

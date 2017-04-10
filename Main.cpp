@@ -32,6 +32,8 @@ void Render() {
 	static float test = 0;
 	test += 0.001;
 
+	camera.Attach(*sphere);
+
 	//camera.RotateY(test);
 
 	// Box
@@ -149,7 +151,8 @@ void Resize(int width, int height) {
 		ratio = (GLfloat)height / (GLfloat)width;
 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-	camera.SetProj(glm::perspective(glm::radians(60.f), ratio, 1.f, 1000.f));
+	//camera.SetProj(glm::perspective(glm::radians(60.f), ratio, 1.f, 1000.f));
+	camera.SetProj(glm::ortho(-25.f, 25.f, -25.f, 25.f, -50.f, 50.f));
 }
 
 void Init() {
@@ -163,17 +166,17 @@ void Keyboard(unsigned char key, int x, int y)
 	switch (key) {
 	case 'w':
 		//camera.GoForward(1.0f);
-		sphere->SetPosition(vec3(1, 0, 0) + *sphere->GetPosition());
+		sphere->SetPosition(vec3(0, 0, 1) + *sphere->GetPosition());
 		break;
 	case 's':
 		//camera.GoForward(-1.0f);
-		sphere->SetPosition(vec3(-1, 0, 0) + *sphere->GetPosition());
+		sphere->SetPosition(vec3(0, 0, -1) + *sphere->GetPosition());
 		break;
 	case 'a':
-		sphere->SetPosition(vec3(0, 0, 1) + *sphere->GetPosition());
+		sphere->SetPosition(vec3(1, 0, 0) + *sphere->GetPosition());
 		break;
 	case 'd':
-		sphere->SetPosition(vec3(0, 0, -1) + *sphere->GetPosition());
+		sphere->SetPosition(vec3(-1, 0, 0) + *sphere->GetPosition());
 		break;
 	case 'q':
 		camera.GoForward(1.0f);

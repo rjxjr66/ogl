@@ -4,7 +4,6 @@
 
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/swizzle.hpp>
 
 #include "Material.h"
 
@@ -114,7 +113,8 @@ void Mesh::Render(float dt) {
 
 void Mesh::SetPosition(const vec3& v)
 {
-	world.w.xyz = v;
+	world[3].x = v.x;
+	world[3].z = v.z;
 	worldPosition = v;
 }
 
