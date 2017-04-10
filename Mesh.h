@@ -24,6 +24,7 @@ private:
 	GLuint IBO;
 	GLuint texture;
 	mat4 world;
+	vec3 worldPosition;
 	Material* material;
 	int fvf;
 
@@ -34,6 +35,8 @@ public:
 	void SetVertexArray(void* vertices, unsigned int size, int FVF, const std::vector<unsigned int>& indices);
 	void SetMaterial(Material* m) { material = m; };
 	void SetMatrix(const mat4& m) { world = m; };
+	void SetPosition(const vec3& v);
+	vec3* GetPosition();
 	const mat4& GetMatrix() { return world; };
 	Material* GetMaterial() { return material; }
 	virtual void Update(float dt) {};

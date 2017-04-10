@@ -35,21 +35,21 @@ void Render() {
 	//camera.RotateY(test);
 
 	// Box
-	mat4 world = glm::translate(mat4(), vec3(-2, 0, 0));
-	
-	shader.Use();
-	glUniformMatrix4fv(shader.GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * world)[0][0]);
-
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	
-	glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_INT, 0);
-
-	glDisableVertexAttribArray(0);
+// 	mat4 world = glm::translate(mat4(), vec3(0, 10, 0));
+// 	
+// 	shader.Use();
+// 	glUniformMatrix4fv(shader.GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * world)[0][0]);
+// 
+// 	glEnableVertexAttribArray(0);
+// 
+// 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+// 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+// 	
+// 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+// 	
+// 	glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_INT, 0);
+// 
+// 	glDisableVertexAttribArray(0);
 
 	// Sphere
 	static vec3 lightDirection = vec3(-1, -1, 0);
@@ -107,6 +107,7 @@ void InitGeometry() {
 
 	sphere = Mesh::GenerateSphere(1, 16, 32);
 	sphere->SetMaterial(phong);
+	sphere->SetMatrix(glm::translate(mat4(1), vec3(0,10,0)));
 
 	terrain = new Terrain("textures/pohang.png", (float)1 / (float)32);
 	terrain->SetMaterial(terrainMaterial);
@@ -154,29 +155,33 @@ void Resize(int width, int height) {
 void Init() {
 	glEnable(GL_DEPTH_TEST);
 
-	camera.SetView(vec3(0, 25, 50), vec3(0, 0, 0), vec3(0, 1, 0));
+	camera.SetView(vec3(0, 30, 0), vec3(0, 0, 0), vec3(0, 0, 1));
 }
 
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
 	case 'w':
-		camera.GoForward(1.0f);
+		//camera.GoForward(1.0f);
+		sphere->SetPosition(vec3(1, 0, 0) + *sphere->GetPosition());
 		break;
 	case 's':
-		camera.GoForward(-1.0f);
+		//camera.GoForward(-1.0f);
+		sphere->SetPosition(vec3(-1, 0, 0) + *sphere->GetPosition());
 		break;
 	case 'a':
-
+		sphere->SetPosition(vec3(0, 0, 1) + *sphere->GetPosition());
 		break;
 	case 'd':
-
+		sphere->SetPosition(vec3(0, 0, -1) + *sphere->GetPosition());
 		break;
 	case 'q':
-		camera.TurnAround(-0.01f);
+		camera.GoForward(1.0f);
+		//camera.TurnAround(-0.01f);
 		break;
 	case 'e':
-		camera.TurnAround(0.01f);
+		camera.GoForward(-1.0f);
+		//camera.TurnAround(0.01f);
 		break;
 	default:
 		return;

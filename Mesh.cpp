@@ -3,10 +3,12 @@
 #include <vector>
 
 #include <glm/gtc/constants.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/swizzle.hpp>
 
 #include "Material.h"
 
-Mesh::Mesh() : fvf(FVF::Position), nVertices(0), nIndeces(0)
+Mesh::Mesh() : fvf(FVF::Position), nVertices(0), nIndeces(0), worldPosition(vec3(0))
 {
 
 }
@@ -108,4 +110,15 @@ void Mesh::Render(float dt) {
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+}
+
+void Mesh::SetPosition(const vec3& v)
+{
+	world.w.xyz = v;
+	worldPosition = v;
+}
+
+vec3* Mesh::GetPosition()
+{
+	return &worldPosition;
 }
