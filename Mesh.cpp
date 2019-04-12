@@ -7,7 +7,7 @@
 
 #include "Material.h"
 
-Mesh::Mesh() : fvf(FVF::Position), nVertices(0), nIndeces(0), worldPosition(vec3(0))
+Mesh::Mesh() : fvf(FVF::Position), nVertices(0), nIndeces(0), worldPosition(vec3(0)), parent(nullptr)
 {
 
 }
@@ -113,12 +113,19 @@ void Mesh::Render(float dt) {
 
 void Mesh::SetPosition(const vec3& v)
 {
-	world[3].x = v.x;
-	world[3].z = v.z;
 	worldPosition = v;
 }
 
 vec3* Mesh::GetPosition()
 {
 	return &worldPosition;
+}
+
+const mat4 Mesh::GetMatrix() {
+	mat4 _mat = mat4();
+	if (parent != nullptr) {
+		_mat = parent->GetMatrix();
+	}
+
+	return _mat * glm::translate(mat4(), worldPosition) * world;
 }

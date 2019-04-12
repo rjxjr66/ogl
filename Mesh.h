@@ -28,6 +28,8 @@ private:
 	Material* material;
 	int fvf;
 
+	Mesh* parent;
+
 	int nVertices;
 	int nIndeces;
 public:
@@ -36,8 +38,9 @@ public:
 	void SetMaterial(Material* m) { material = m; };
 	void SetMatrix(const mat4& m) { world = m; };
 	void SetPosition(const vec3& v);
+	void SetParent(Mesh* p) { parent = p; };
 	vec3* GetPosition();
-	const mat4& GetMatrix() { return world; };
+	const mat4 GetMatrix();
 	Material* GetMaterial() { return material; }
 	virtual void Update(float dt) {};
 	virtual void Render(float dt);
