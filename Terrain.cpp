@@ -11,6 +11,9 @@ Terrain::Terrain(std::string file, float scale)
 		SOIL_LOAD_L
 	);
 
+	width = 50;
+	height = 50;
+
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	terrainMesh = new Mesh();
