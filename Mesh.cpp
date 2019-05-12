@@ -129,3 +129,48 @@ const mat4 Mesh::GetMatrix() {
 
 	return _mat * glm::translate(mat4(), worldPosition) * world;
 }
+
+Mesh* Mesh::FromAssimpScene(const aiScene* scene) {
+	std::vector<Vertex> vertices;
+	std::vector<GLuint> indices;
+
+	const aiMesh* paiMesh = scene->mMeshes[0];
+	vertices.resize(paiMesh->mNumVertices);
+	auto v = vertices.begin();
+	for (unsigned int i = 0; i < paiMesh->mNumVertices; i++) {
+		const aiVector3D* pPos = &(paiMesh->mVertices[i]);
+		const aiVector3D* pNormal = &(paiMesh->mNormals[i]);
+		const aiVector3D* pTexCoord = &(paiMesh->mTextureCoords[0][i]);
+
+		Vertex v_temp;
+		v_temp.position = vec3(pPos->x, pPos->y, pPos->z);
+		v_temp.normal = vec3(pNormal->x, pNormal->y, pNormal->z);
+		v_temp.texcoord = vec2(pTexCoord->x, pTexCoord->y);
+
+		*v++ = v_temp;
+	}
+	
+	for (unsigned int i = 0; i < paiMesh->mNumFaces; i++) {
+		const aiFace& Face = paiMesh->mFaces[i];
+		indices.push_back(Face.mIndices[0]);
+		indices.push_back(Face.mIndices[1]);
+		indices.push_back(Face.mIndices[2]);
+	}
+
+	Mesh* mesh = new Mesh();
+	mesh->fvf = FVF::Position | FVF::Normal | FVF::TexCoord;
+	mesh->nVertices = vertices.size();
+	mesh->nIndeces = indices.size();
+
+	glGenBuffers(1, &mesh->VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+
+	glGenBuffers(1, &mesh->IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+	return mesh;
+}

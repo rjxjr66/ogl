@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <assimp/scene.h> 
 
 using namespace glm;
 
@@ -36,7 +37,7 @@ public:
 	Mesh();
 	void SetVertexArray(void* vertices, unsigned int size, int FVF, const std::vector<unsigned int>& indices);
 	void SetMaterial(Material* m) { material = m; };
-	void SetMatrix(const mat4& m) { world = m; };
+	void SetMatrix(mat4 m) { world = m; };
 	void SetPosition(const vec3& v);
 	void SetParent(Mesh* p) { parent = p; };
 	vec3* GetPosition();
@@ -46,4 +47,5 @@ public:
 	virtual void Render(float dt);
 
 	static Mesh* GenerateSphere(float radius, unsigned int rings, unsigned int sectors);
+	static Mesh* FromAssimpScene(const aiScene* scene);
 };

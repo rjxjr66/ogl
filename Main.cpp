@@ -6,7 +6,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <assimp/Importer.hpp>
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
 
 #include "Shader.h"
 #include "Material.h"
@@ -23,6 +25,7 @@ Camera camera;
 
 Mesh* sphere;
 Mesh* sphere2;
+Mesh* assimpModel;
 Material* phong;
 Material* terrainMaterial;
 Terrain* terrain;
@@ -35,7 +38,7 @@ void Render() {
 	static float test = 0;
 	test += 0.001;
 
-	camera.Attach(*sphere);
+	// camera.Attach(*sphere);
 
 	//camera.RotateY(test);
 
@@ -72,6 +75,12 @@ void Render() {
 	glUniform3fv(phong->GetShader()->GetUniformVar("gLightDirection"), 1, &lightDirection[0]);
 
 	sphere2->Render(0);
+
+	glUniformMatrix4fv(phong->GetShader()->GetUniformVar("gWorld"), 1, GL_FALSE, &assimpModel->GetMatrix()[0][0]);
+	glUniformMatrix4fv(phong->GetShader()->GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * assimpModel->GetMatrix())[0][0]);
+	glUniform3fv(phong->GetShader()->GetUniformVar("gLightDirection"), 1, &lightDirection[0]);
+
+	assimpModel->Render(0);
 	
 	terrain->GetMaterial()->Use();
 	glUniformMatrix4fv(terrainMaterial->GetShader()->GetUniformVar("gWorld"), 1, GL_FALSE, &terrain->GetMatrix()[0][0]);
@@ -84,16 +93,6 @@ void Render() {
 }
 
 void InitGeometry() {
-	Assimp::Importer importer;
-	// And have it read the given file with some example postprocessing
-	// Usually - if speed is not the most important aspect for you - you'll
-	// probably to request more postprocessing than we do in this example.
-	/*const aiScene* scene = importer.ReadFile("",
-		aiProcess_CalcTangentSpace |
-		aiProcess_Triangulate |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType);*/
-
 	vec3 vertices[8];
 	vertices[0] = vec3(-0.5f, -0.5f, 0.5f);
 	vertices[1] = vec3(0.5f, -0.5f, 0.5f);
@@ -134,6 +133,18 @@ void InitGeometry() {
 	sphere2->SetMaterial(phong);
 	sphere2->SetPosition(vec3(5, 0, 0));
 	sphere2->SetParent(sphere);
+
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile("models/dragon.3ds",
+		aiProcess_CalcTangentSpace |
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_SortByPType);
+
+	assimpModel = Mesh::FromAssimpScene(scene);
+	assimpModel->SetMaterial(phong);
+	assimpModel->SetPosition(vec3(25, 0, 25));
+	assimpModel->SetMatrix(glm::rotate(mat4(1.0f), -90.f, vec3(1, 0, 0)) * glm::scale(mat4(1.0f), vec3(0.5, 0.5, 0.5)));
 
 	terrain = new Terrain("textures/pohang.png", 0);
 	terrain->SetMaterial(terrainMaterial);
@@ -182,19 +193,19 @@ void Resize(int width, int height) {
 void Init() {
 	glEnable(GL_DEPTH_TEST);
 
-	camera.SetView(vec3(25, 30, 25), vec3(0, 0, 0), vec3(0, 0, 1));
+	camera.SetView(vec3(0, 30, 30), vec3(0, 0, 0), vec3(0, 1, 0));
 }
 
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
 	case 'w':
-		//camera.GoForward(1.0f);
-		sphere->SetPosition(vec3(0, 0, 1) + *sphere->GetPosition());
+		camera.GoForward(1.0f);
+		//sphere->SetPosition(vec3(0, 0, 1) + *sphere->GetPosition());
 		break;
 	case 's':
-		//camera.GoForward(-1.0f);
-		sphere->SetPosition(vec3(0, 0, -1) + *sphere->GetPosition());
+		camera.GoForward(-1.0f);
+		//sphere->SetPosition(vec3(0, 0, -1) + *sphere->GetPosition());
 		break;
 	case 'a':
 		sphere->SetPosition(vec3(1, 0, 0) + *sphere->GetPosition());
@@ -203,12 +214,12 @@ void Keyboard(unsigned char key, int x, int y)
 		sphere->SetPosition(vec3(-1, 0, 0) + *sphere->GetPosition());
 		break;
 	case 'q':
-		camera.GoForward(1.0f);
-		//camera.TurnAround(-0.01f);
+		//camera.GoForward(1.0f);
+		camera.TurnAround(-0.01f);
 		break;
 	case 'e':
-		camera.GoForward(-1.0f);
-		//camera.TurnAround(0.01f);
+		//camera.GoForward(-1.0f);
+		camera.TurnAround(0.01f);
 		break;
 	default:
 		return;
