@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <assimp/Importer.hpp>
+
 #include "Shader.h"
 #include "Material.h"
 #include "Camera.h"
@@ -82,6 +84,16 @@ void Render() {
 }
 
 void InitGeometry() {
+	Assimp::Importer importer;
+	// And have it read the given file with some example postprocessing
+	// Usually - if speed is not the most important aspect for you - you'll
+	// probably to request more postprocessing than we do in this example.
+	/*const aiScene* scene = importer.ReadFile("",
+		aiProcess_CalcTangentSpace |
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_SortByPType);*/
+
 	vec3 vertices[8];
 	vertices[0] = vec3(-0.5f, -0.5f, 0.5f);
 	vertices[1] = vec3(0.5f, -0.5f, 0.5f);
