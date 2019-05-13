@@ -264,5 +264,20 @@ Mesh* Mesh::GenerateCylinder(float radius, float height, float dtheta) {
 		i += 4;
 	}
 
-	return nullptr;
+	Mesh* mesh = new Mesh();
+	mesh->fvf = FVF::Position | FVF::Normal | FVF::TexCoord;
+	mesh->nVertices = vertices.size();
+	mesh->nIndeces = indices.size();
+
+	glGenBuffers(1, &mesh->VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+
+	glGenBuffers(1, &mesh->IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+	return mesh;
 }

@@ -129,7 +129,7 @@ void InitGeometry() {
 	sphere->SetMaterial(phong);
 	sphere->SetPosition(vec3(25, 0, 25));
 
-	sphere2 = Mesh::GenerateSphere(0.5, 16, 32);
+	sphere2 = Mesh::GenerateCylinder(10, 30, 0.1);
 	sphere2->SetMaterial(phong);
 	sphere2->SetPosition(vec3(5, 0, 0));
 	sphere2->SetParent(sphere);
