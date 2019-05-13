@@ -18,6 +18,14 @@ typedef struct Vertex {
 	vec2 texcoord;
 };
 
+typedef struct Face {
+	unsigned int a;
+	unsigned int b;
+	unsigned int c;
+	vec3 normal;
+	float area;
+};
+
 class Material;
 class Mesh {
 private:
@@ -47,5 +55,6 @@ public:
 	virtual void Render(float dt);
 
 	static Mesh* GenerateSphere(float radius, unsigned int rings, unsigned int sectors);
+	static Mesh* GenerateCylinder(float radius, float height, float dtheta);
 	static Mesh* FromAssimpScene(const aiScene* scene);
 };

@@ -157,6 +157,47 @@ Mesh* Mesh::FromAssimpScene(const aiScene* scene) {
 		indices.push_back(Face.mIndices[2]);
 	}
 
+	// Per face normal 구하기
+	std::vector<Face> faces;
+	for (int i = 0; i < indices.size(); i += 3) {
+		Face face;
+		face.a = indices[i];
+		face.b = indices[i + 1];
+		face.c = indices[i + 2];
+
+		// normal = AB.cross( AC )
+		vec3 a = vec3(vertices[face.a].position);
+		vec3 b = vec3(vertices[face.b].position);
+		vec3 c = vec3(vertices[face.c].position);
+		face.normal = glm::cross((a - b), (a - c));
+		face.area = glm::length(face.normal);
+		face.normal = glm::normalize(face.normal);
+
+		faces.push_back(face);
+	}
+
+	// Per vertex normal 구하기
+	for (int i = 0; i < vertices.size(); i++) {
+		std::vector<Face> in;
+		for (int j = 0; j < faces.size(); j++) {
+			if (faces[j].a == i || faces[j].b == i || faces[j].c == i) {
+				in.push_back(faces[j]);
+			}
+
+			float sumOfArea = 0;
+			for (int k = 0; k < in.size(); k++) {
+				sumOfArea += in[k].area;
+			}
+			vec3 sumOfWeightedNormal = vec3();
+			for (int k = 0; k < in.size(); k++) {
+				sumOfWeightedNormal = sumOfWeightedNormal + (in[k].normal * (in[k].area / sumOfArea) );
+			}
+			vertices[i].normal = glm::normalize(sumOfWeightedNormal);
+		}
+
+		
+	}
+
 	Mesh* mesh = new Mesh();
 	//mesh->fvf = FVF::Position | FVF::Normal | FVF::TexCoord;
 	mesh->fvf = FVF::Position;
@@ -173,5 +214,55 @@ Mesh* Mesh::FromAssimpScene(const aiScene* scene) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->IBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
+	// To do
+	// 1. Face normal 로 line 만들어서 face_normal_mesh 만들기
+	// 2. Vertex normal 로 line 만들어서 face_normal_mesh 만들기
+	// 3. 1, 2의 parent 를 mesh 로 설정하기
+
 	return mesh;
+}
+
+Mesh* Mesh::GenerateCylinder(float radius, float height, float dtheta) {
+	std::vector<Vertex> vertices;
+	std::vector<unsigned int> indices;
+	int i = 0;
+
+	for (float theta = 0; theta < 2 * glm::pi<float>(); theta += dtheta) {
+		float x = radius * glm::cos(theta);
+		float y = height / 2;
+		float z = radius * glm::sin(theta);
+		float x_ = radius * glm::cos(theta + dtheta);
+		float y_ = height / -2;
+		float z_ = radius * glm::sin(theta + dtheta);
+		
+		
+		Vertex v[4];
+		v[0].position = vec3(x, y, z);
+		v[0].normal = v[0].position - vec3(0, y, 0);
+		v[0].texcoord = vec2(theta / 2 * glm::pi<float>(), 0);
+		v[1].position = vec3(x_, y, z_);
+		v[1].normal = v[1].position - vec3(0, y, 0);
+		v[1].texcoord = vec2((theta + dtheta) / 2 * glm::pi<float>(), 0);
+		v[2].position = vec3(x, y_, z);
+		v[2].normal = v[2].position - vec3(0, y_, 0);
+		v[2].texcoord = vec2(theta / 2 * glm::pi<float>(), 1);
+		v[3].position = vec3(x_, y_, z_);
+		v[3].normal = v[3].position - vec3(0, y_, 0);
+		v[3].texcoord = vec2((theta + dtheta) / 2 * glm::pi<float>(), 1);
+		vertices.push_back(v[0]);
+		vertices.push_back(v[1]);
+		vertices.push_back(v[2]);
+		vertices.push_back(v[3]);
+
+		indices.push_back(i);
+		indices.push_back(i+2);
+		indices.push_back(i+3);
+		indices.push_back(i);
+		indices.push_back(i+3);
+		indices.push_back(i+1);
+
+		i += 4;
+	}
+
+	return nullptr;
 }
