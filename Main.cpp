@@ -76,9 +76,9 @@ void Render() {
 
 	sphere2->Render(0);
 
-	glUniformMatrix4fv(phong->GetShader()->GetUniformVar("gWorld"), 1, GL_FALSE, &assimpModel->GetMatrix()[0][0]);
-	glUniformMatrix4fv(phong->GetShader()->GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * assimpModel->GetMatrix())[0][0]);
-	glUniform3fv(phong->GetShader()->GetUniformVar("gLightDirection"), 1, &lightDirection[0]);
+	
+	shader.Use();
+	glUniformMatrix4fv(shader.GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * assimpModel->GetMatrix())[0][0]);
 
 	assimpModel->Render(0);
 	
@@ -135,15 +135,17 @@ void InitGeometry() {
 	sphere2->SetParent(sphere);
 
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile("models/dragon.3ds",
+	const aiScene* scene = importer.ReadFile("models/space_station.off",
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType);
 
 	assimpModel = Mesh::FromAssimpScene(scene);
-	assimpModel->SetMaterial(phong);
-	assimpModel->SetPosition(vec3(25, 0, 25));
+	Material* ma = new Material();
+	ma->SetShader(&shader);
+	assimpModel->SetMaterial(ma);
+	assimpModel->SetPosition(vec3(25, 10, 25));
 	assimpModel->SetMatrix(glm::rotate(mat4(1.0f), -90.f, vec3(1, 0, 0)) * glm::scale(mat4(1.0f), vec3(0.5, 0.5, 0.5)));
 
 	terrain = new Terrain("textures/pohang.png", 0);
@@ -208,10 +210,10 @@ void Keyboard(unsigned char key, int x, int y)
 		//sphere->SetPosition(vec3(0, 0, -1) + *sphere->GetPosition());
 		break;
 	case 'a':
-		sphere->SetPosition(vec3(1, 0, 0) + *sphere->GetPosition());
+		assimpModel->SetPosition(vec3(1, 0, 0) + *assimpModel->GetPosition());
 		break;
 	case 'd':
-		sphere->SetPosition(vec3(-1, 0, 0) + *sphere->GetPosition());
+		assimpModel->SetPosition(vec3(-1, 0, 0) + *assimpModel->GetPosition());
 		break;
 	case 'q':
 		//camera.GoForward(1.0f);

@@ -139,13 +139,13 @@ Mesh* Mesh::FromAssimpScene(const aiScene* scene) {
 	auto v = vertices.begin();
 	for (unsigned int i = 0; i < paiMesh->mNumVertices; i++) {
 		const aiVector3D* pPos = &(paiMesh->mVertices[i]);
-		const aiVector3D* pNormal = &(paiMesh->mNormals[i]);
-		const aiVector3D* pTexCoord = &(paiMesh->mTextureCoords[0][i]);
+		//const aiVector3D* pNormal = &(paiMesh->mNormals[i]);
+		//const aiVector3D* pTexCoord = &(paiMesh->mTextureCoords[0][i]);
 
 		Vertex v_temp;
 		v_temp.position = vec3(pPos->x, pPos->y, pPos->z);
-		v_temp.normal = vec3(pNormal->x, pNormal->y, pNormal->z);
-		v_temp.texcoord = vec2(pTexCoord->x, pTexCoord->y);
+		//v_temp.normal = vec3(pNormal->x, pNormal->y, pNormal->z);
+		//v_temp.texcoord = vec2(pTexCoord->x, pTexCoord->y);
 
 		*v++ = v_temp;
 	}
@@ -158,7 +158,8 @@ Mesh* Mesh::FromAssimpScene(const aiScene* scene) {
 	}
 
 	Mesh* mesh = new Mesh();
-	mesh->fvf = FVF::Position | FVF::Normal | FVF::TexCoord;
+	//mesh->fvf = FVF::Position | FVF::Normal | FVF::TexCoord;
+	mesh->fvf = FVF::Position;
 	mesh->nVertices = vertices.size();
 	mesh->nIndeces = indices.size();
 
