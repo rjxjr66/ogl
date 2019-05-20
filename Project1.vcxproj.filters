@@ -68,6 +68,12 @@
     <None Include="shaders\terrain.vs">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="shaders\line.fs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\line.vs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

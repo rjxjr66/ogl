@@ -219,6 +219,12 @@ Mesh* Mesh::FromAssimpScene(const aiScene* scene) {
 	// 2. Vertex normal 로 line 만들어서 face_normal_mesh 만들기
 	// 3. 1, 2의 parent 를 mesh 로 설정하기
 
+	mesh->perVertexNormal = new Mesh;
+	mesh->perVertexNormal->SetParent(mesh);
+
+	mesh->perFaceNormal = new Mesh;
+	mesh->perFaceNormal->SetParent(mesh);
+
 	return mesh;
 }
 

@@ -28,6 +28,7 @@ Mesh* sphere2;
 Mesh* assimpModel;
 Material* phong;
 Material* terrainMaterial;
+Material* line;
 Terrain* terrain;
 
 using namespace glm;
@@ -75,6 +76,9 @@ void Render() {
 	glUniform3fv(phong->GetShader()->GetUniformVar("gLightDirection"), 1, &lightDirection[0]);
 
 	sphere2->Render(0);
+	
+	glUniformMatrix4fv(line->GetShader()->GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * sphere2->perFaceNormal->GetMatrix())[0][0]);
+	sphere2->perFaceNormal->RenderLine();
 
 	
 	shader.Use();
@@ -132,14 +136,17 @@ void InitGeometry() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
+
 	sphere = Mesh::GenerateSphere(1, 16, 32);
 	sphere->SetMaterial(phong);
 	sphere->SetPosition(vec3(25, 0, 25));
 
-	sphere2 = Mesh::GenerateCylinder(10, 30, 0.1);
+	sphere2 = Mesh::GenerateCylinder(10, 30, 0.5);
 	sphere2->SetMaterial(phong);
 	sphere2->SetPosition(vec3(5, 0, 0));
 	sphere2->SetParent(sphere);
+	sphere2->perFaceNormal->SetMaterial(line);
+	sphere2->perVertexNormal->SetMaterial(line);
 
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile("models/space_station.off",
@@ -185,6 +192,11 @@ void InitShader() {
 	terrainShader->AddUniformVar("gLightDirection");
 
 	terrainMaterial->SetShader(terrainShader);
+
+	Shader* lineShader = new Shader(std::string("shaders/line.vs"), std::string("shaders/line.fs"));
+	lineShader->AddUniformVar("gWVP");
+	line->SetShader(lineShader);
+
 }
 
 void Resize(int width, int height) {

@@ -21,6 +21,8 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\line.fs" />
+    <None Include="shaders\line.vs" />
     <None Include="shaders\phong.fs" />
     <None Include="shaders\phong.vs" />
     <None Include="shaders\shader.fs" />

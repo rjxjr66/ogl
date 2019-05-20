@@ -41,6 +41,8 @@ private:
 
 	int nVertices;
 	int nIndeces;
+
+	
 public:
 	Mesh();
 	void SetVertexArray(void* vertices, unsigned int size, int FVF, const std::vector<unsigned int>& indices);
@@ -53,8 +55,12 @@ public:
 	Material* GetMaterial() { return material; }
 	virtual void Update(float dt) {};
 	virtual void Render(float dt);
+	virtual void RenderLine();
 
 	static Mesh* GenerateSphere(float radius, unsigned int rings, unsigned int sectors);
 	static Mesh* GenerateCylinder(float radius, float height, float dtheta);
 	static Mesh* FromAssimpScene(const aiScene* scene);
+
+	Mesh* perFaceNormal;
+	Mesh* perVertexNormal;
 };
