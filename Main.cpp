@@ -6,6 +6,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
+
 #include "Shader.h"
 #include "Material.h"
 #include "Camera.h"
@@ -21,6 +25,7 @@ Camera camera;
 
 Mesh* sphere;
 Mesh* sphere2;
+Mesh* assimpModel;
 Material* phong;
 Material* terrainMaterial;
 Terrain* terrain;
@@ -33,30 +38,30 @@ void Render() {
 	static float test = 0;
 	test += 0.001;
 
-	//camera.Attach(*sphere);
+	// camera.Attach(*sphere);
 
 	//camera.RotateY(test);
 
 	// Box
-// 	mat4 world = glm::translate(mat4(), vec3(0, 10, 0));
-// 	
-// 	shader.Use();
-// 	glUniformMatrix4fv(shader.GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * world)[0][0]);
-// 
-// 	glEnableVertexAttribArray(0);
-// 
-// 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-// 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-// 	
-// 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-// 	
-// 	glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_INT, 0);
-// 
-// 	glDisableVertexAttribArray(0);
+ 	mat4 world = glm::translate(mat4(), vec3(0, 10, 0));
+ 	
+ 	shader.Use();
+ 	glUniformMatrix4fv(shader.GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * world)[0][0]);
+ 
+ 	glEnableVertexAttribArray(0);
+ 
+ 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+ 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+ 	
+ 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+ 	
+ 	glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_INT, 0);
+ 
+ 	glDisableVertexAttribArray(0);
 
 	// Sphere
 	static vec3 lightDirection = vec3(-1, -1, 0);
-	lightDirection = vec3(glm::rotate(mat4(1.0f), 0.01f, vec3(0, 1, 0)) * glm::rotate(mat4(1.0f), 0.01f, vec3(0, 0, 1)) * vec4(lightDirection, 0));
+	lightDirection = vec3(glm::rotate(mat4(1.0f), 0.001f, vec3(0, 1, 0)) * glm::rotate(mat4(1.0f), 0.001f, vec3(0, 0, 1)) * vec4(lightDirection, 0));
 
 	sphere->GetMaterial()->Use();
 	glUniformMatrix4fv(phong->GetShader()->GetUniformVar("gWorld"), 1, GL_FALSE, &sphere->GetMatrix()[0][0]);
@@ -64,6 +69,18 @@ void Render() {
 	glUniform3fv(phong->GetShader()->GetUniformVar("gLightDirection"), 1, &lightDirection[0]);
 	
 	sphere->Render(0);
+
+	glUniformMatrix4fv(phong->GetShader()->GetUniformVar("gWorld"), 1, GL_FALSE, &sphere2->GetMatrix()[0][0]);
+	glUniformMatrix4fv(phong->GetShader()->GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * sphere2->GetMatrix())[0][0]);
+	glUniform3fv(phong->GetShader()->GetUniformVar("gLightDirection"), 1, &lightDirection[0]);
+
+	sphere2->Render(0);
+
+	
+	shader.Use();
+	glUniformMatrix4fv(shader.GetUniformVar("gWVP"), 1, GL_FALSE, &(camera.GetProj() * camera.GetView() * assimpModel->GetMatrix())[0][0]);
+
+	assimpModel->Render(0);
 	
 	sphere2->GetMaterial()->Use();
 	glUniformMatrix4fv(phong->GetShader()->GetUniformVar("gWorld"), 1, GL_FALSE, &sphere2->GetMatrix()[0][0]);
@@ -117,14 +134,28 @@ void InitGeometry() {
 
 	sphere = Mesh::GenerateSphere(1, 16, 32);
 	sphere->SetMaterial(phong);
-	sphere->SetMatrix(glm::translate(mat4(1), vec3(0,10,0)));
+	sphere->SetPosition(vec3(25, 0, 25));
 
-
-	sphere2 = Mesh::GenerateSphere(1, 16, 32);
+	sphere2 = Mesh::GenerateCylinder(10, 30, 0.1);
 	sphere2->SetMaterial(phong);
-	sphere2->SetPosition(vec3(0,10,-5));
+	sphere2->SetPosition(vec3(5, 0, 0));
+	sphere2->SetParent(sphere);
 
-	terrain = new Terrain("textures/pohang.png", (float)1 / (float)32);
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile("models/space_station.off",
+		aiProcess_CalcTangentSpace |
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_SortByPType);
+
+	assimpModel = Mesh::FromAssimpScene(scene);
+	Material* ma = new Material();
+	ma->SetShader(&shader);
+	assimpModel->SetMaterial(ma);
+	assimpModel->SetPosition(vec3(25, 10, 25));
+	assimpModel->SetMatrix(glm::rotate(mat4(1.0f), -90.f, vec3(1, 0, 0)) * glm::scale(mat4(1.0f), vec3(0.5, 0.5, 0.5)));
+
+	terrain = new Terrain("textures/pohang.png", 0);
 	terrain->SetMaterial(terrainMaterial);
 }
 
@@ -145,7 +176,7 @@ void InitShader() {
 	phong->SetShader(phongShader);
 
 	terrainMaterial = new Material();
-	terrainMaterial->SetTexture(new Texture("textures/height.png"));
+	terrainMaterial->SetTexture(new Texture("textures/texture.png"));
 
 	Shader* terrainShader = new Shader(std::string("shaders/terrain.vs"), std::string("shaders/terrain.fs"));
 
@@ -171,7 +202,7 @@ void Resize(int width, int height) {
 void Init() {
 	glEnable(GL_DEPTH_TEST);
 
-	camera.SetView(vec3(0, 60, 100), vec3(0, 0, 0), vec3(0, 1, 0));
+	camera.SetView(vec3(0, 30, 30), vec3(0, 0, 0), vec3(0, 1, 0));
 }
 
 void Keyboard(unsigned char key, int x, int y)
@@ -186,10 +217,10 @@ void Keyboard(unsigned char key, int x, int y)
 		//sphere->SetPosition(vec3(0, 0, -1) + *sphere->GetPosition());
 		break;
 	case 'a':
-		//sphere->SetPosition(vec3(1, 0, 0) + *sphere->GetPosition());
+		assimpModel->SetPosition(vec3(1, 0, 0) + *assimpModel->GetPosition());
 		break;
 	case 'd':
-		//sphere->SetPosition(vec3(-1, 0, 0) + *sphere->GetPosition());
+		assimpModel->SetPosition(vec3(-1, 0, 0) + *assimpModel->GetPosition());
 		break;
 	case 'q':
 		//camera.GoForward(1.0f);
@@ -212,7 +243,7 @@ int main(int argc, char** argv) {
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("OpenGL");
 
-	// glutCreateWindow ÇÔ¼ö µÚ¿¡ È£Ãâ
+	// glutCreateWindow ï¿½Ô¼ï¿½ ï¿½Ú¿ï¿½ È£ï¿½ï¿½
 	GLenum res = glewInit();
 	if (res != GLEW_OK)
 	{
@@ -223,6 +254,7 @@ int main(int argc, char** argv) {
 	Init();
 	InitShader();
 	InitGeometry();
+
 
 	glutKeyboardFunc(Keyboard);
 	glutDisplayFunc(Render);

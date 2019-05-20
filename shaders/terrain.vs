@@ -17,5 +17,5 @@ void main()
     Normal0 = (gWorld * vec4(Normal, 0.0)).xyz;
 	Height0 = Position.y;
 
-    gl_Position = gWVP * vec4(Position, 1.0);
+    gl_Position = gWVP * vec4(Position.x, 0, Position.z, 1.0);
 }

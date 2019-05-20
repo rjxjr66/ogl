@@ -16,7 +16,7 @@ public:
 
 	void SetMaterial(Material* m);
 	void SetMatrix(const mat4& m);
-	const mat4& GetMatrix() { return terrainMesh->GetMatrix(); };
+	const mat4 GetMatrix() { return terrainMesh->GetMatrix(); };
 	Material* GetMaterial() { return terrainMesh->GetMaterial(); };
 
 	void Update(float dt) {};

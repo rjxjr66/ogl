@@ -16,5 +16,5 @@ void main()
 {
     vec4 DiffuseColor = diffuse * max(dot(normalize(gLightDirection), normalize(Normal0)), 0);
 
-    gl_FragColor = texture2D(diffuseTexture, TexCoord0) * ( ambient * 0.5 + DiffuseColor  );
+    gl_FragColor = texture2D(diffuseTexture, TexCoord0);
 }

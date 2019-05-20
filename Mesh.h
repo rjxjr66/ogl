@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <assimp/scene.h> 
 
 using namespace glm;
 
@@ -17,6 +18,14 @@ typedef struct Vertex {
 	vec2 texcoord;
 };
 
+typedef struct Face {
+	unsigned int a;
+	unsigned int b;
+	unsigned int c;
+	vec3 normal;
+	float area;
+};
+
 class Material;
 class Mesh {
 private:
@@ -28,19 +37,24 @@ private:
 	Material* material;
 	int fvf;
 
+	Mesh* parent;
+
 	int nVertices;
 	int nIndeces;
 public:
 	Mesh();
 	void SetVertexArray(void* vertices, unsigned int size, int FVF, const std::vector<unsigned int>& indices);
 	void SetMaterial(Material* m) { material = m; };
-	void SetMatrix(const mat4& m) { world = m; };
+	void SetMatrix(mat4 m) { world = m; };
 	void SetPosition(const vec3& v);
+	void SetParent(Mesh* p) { parent = p; };
 	vec3* GetPosition();
-	const mat4& GetMatrix() { return world; };
+	const mat4 GetMatrix();
 	Material* GetMaterial() { return material; }
 	virtual void Update(float dt) {};
 	virtual void Render(float dt);
 
 	static Mesh* GenerateSphere(float radius, unsigned int rings, unsigned int sectors);
+	static Mesh* GenerateCylinder(float radius, float height, float dtheta);
+	static Mesh* FromAssimpScene(const aiScene* scene);
 };
